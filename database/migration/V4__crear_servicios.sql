@@ -1,3 +1,7 @@
+-- ============================================================
+--  PetCare Manager — V4: Servicios
+--  Depende de: ninguna tabla anterior
+-- ============================================================
 CREATE TABLE Servicios (
                            ServicioID   INT            NOT NULL AUTO_INCREMENT,
                            Nombre       VARCHAR(120)   NOT NULL,

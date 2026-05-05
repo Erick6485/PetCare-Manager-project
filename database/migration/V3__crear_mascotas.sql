@@ -1,3 +1,7 @@
+-- ============================================================
+--  PetCare Manager — V3: Mascotas
+--  Depende de: V2 (Clientes)
+-- ============================================================
 CREATE TABLE Mascotas (
                           MascotaID      INT            NOT NULL AUTO_INCREMENT,
                           Nombre         VARCHAR(100)   NOT NULL,
