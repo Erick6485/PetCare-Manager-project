@@ -1,36 +1,33 @@
 -- ============================================================
 --  PetCare Manager — SEED: Datos iniciales
 --  Prefijo R__ = script repetible (Flyway lo re-ejecuta si cambia)
---  Inserta los roles base y el usuario administrador inicial
 -- ============================================================
-
+ 
 -- Roles del sistema
 INSERT INTO Roles (Nombre) VALUES
     ('ADMINISTRADOR'),
     ('RECEPCIONISTA'),
     ('PELUQUERO')
-ON DUPLICATE KEY UPDATE Nombre = VALUES(Nombre);
-
+ON CONFLICT (Nombre) DO NOTHING;
+ 
 -- Usuario administrador inicial
--- IMPORTANTE: cambiar la contraseña en el primer inicio de sesión
--- Contrasena = bcrypt('Admin2025*') generado con strength 10
+-- Contrasena = bcrypt('Admin2025*')
+-- IMPORTANTE: cambiar en el primer inicio de sesión
 INSERT INTO Usuarios (
     Nombre_completo,
-    Telefono,
     Correo,
     Nombre_usuario,
     Contrasena,
     Estado_actividad,
     rol_id
-) VALUES (
+)
+SELECT
     'Administrador PetCare',
-    NULL,
     'admin@petcare.com',
     'admin',
     '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-    1,
-    (SELECT RolID FROM Roles WHERE Nombre = 'ADMINISTRADOR')
-)
-ON DUPLICATE KEY UPDATE
-    Nombre_completo = VALUES(Nombre_completo),
-    rol_id          = VALUES(rol_id);
+    true,
+    RolID
+FROM Roles
+WHERE Nombre = 'ADMINISTRADOR'
+ON CONFLICT (Nombre_usuario) DO NOTHING;
