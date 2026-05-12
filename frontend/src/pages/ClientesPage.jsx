@@ -18,21 +18,17 @@ export default function ClientesPage() {
     const [form, setForm] = useState(formInicial)
     const [error, setError] = useState('')
     const [cargando, setCargando] = useState(false)
-    const [cargandoLista, setCargandoLista] = useState(true)
 
     useEffect(() => {
         cargarClientes()
     }, [])
 
     const cargarClientes = async () => {
-        setCargandoLista(true)
         try {
             const res = await clienteService.listarTodos()
             setClientes(res.data)
         } catch {
             setError('Error al cargar los clientes')
-        } finally {
-            setCargandoLista(false)
         }
     }
 
@@ -93,67 +89,53 @@ export default function ClientesPage() {
             <div className="page">
                 <div className="page-header">
                     <h1 className="page-titulo">Clientes</h1>
-                    <button id="btn-nuevo-cliente" className="btn btn-primary" onClick={abrirCrear}>
+                    <button className="btn btn-primary" onClick={abrirCrear}>
                         + Nuevo cliente
                     </button>
                 </div>
 
                 <div className="page-filtros">
                     <input
-                        id="buscar-cliente"
                         className="form-input"
                         type="text"
-                        placeholder="🔍 Buscar por nombre..."
+                        placeholder="Buscar por nombre..."
                         value={busqueda}
                         onChange={buscar}
-                        style={{ maxWidth: '320px' }}
                     />
                 </div>
 
-                {cargandoLista ? (
-                    <div className="loading-text">
-                        <span className="loading-spinner"></span>
-                        Cargando clientes...
-                    </div>
-                ) : (
-                    <div className="tabla-container">
-                        <table className="tabla">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Documento</th>
-                                    <th>Teléfono</th>
-                                    <th>Correo</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {clientes.length === 0 ? (
-                                    <tr><td colSpan={5} className="tabla-vacia">
-                                        <div className="empty-state">
-                                            <div className="empty-state-icon">👥</div>
-                                            <div className="empty-state-text">No hay clientes registrados</div>
-                                        </div>
-                                    </td></tr>
-                                ) : (
-                                    clientes.map((c) => (
-                                        <tr key={c.clienteId}>
-                                            <td style={{ fontWeight: 500 }}>{c.nombre}</td>
-                                            <td>{c.documentoIdentidad}</td>
-                                            <td>{c.telefono || '—'}</td>
-                                            <td>{c.correo || '—'}</td>
-                                            <td>
-                                                <button className="btn btn-sm btn-secondary" onClick={() => abrirEditar(c)}>
-                                                    Editar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                <div className="tabla-container">
+                    <table className="tabla">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Documento</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {clientes.length === 0 ? (
+                                <tr><td colSpan={5} className="tabla-vacia">No hay clientes registrados</td></tr>
+                            ) : (
+                                clientes.map((c) => (
+                                    <tr key={c.clienteId}>
+                                        <td>{c.nombre}</td>
+                                        <td>{c.documentoIdentidad}</td>
+                                        <td>{c.telefono || '—'}</td>
+                                        <td>{c.correo || '—'}</td>
+                                        <td>
+                                            <button className="btn btn-sm btn-secondary" onClick={() => abrirEditar(c)}>
+                                                Editar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
                 {modalAbierto && (
                     <Modal
@@ -172,19 +154,17 @@ export default function ClientesPage() {
                                     value={form.documentoIdentidad} onChange={handleChange}
                                     disabled={!!clienteEditando} required />
                             </div>
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label className="form-label">Teléfono</label>
-                                    <input className="form-input" name="telefono" value={form.telefono}
-                                        onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-label">Correo</label>
-                                    <input className="form-input" type="email" name="correo"
-                                        value={form.correo} onChange={handleChange} />
-                                </div>
+                            <div className="form-group">
+                                <label className="form-label">Teléfono</label>
+                                <input className="form-input" name="telefono" value={form.telefono}
+                                    onChange={handleChange} />
                             </div>
-                            {error && <p className="form-error">⚠ {error}</p>}
+                            <div className="form-group">
+                                <label className="form-label">Correo</label>
+                                <input className="form-input" type="email" name="correo"
+                                    value={form.correo} onChange={handleChange} />
+                            </div>
+                            {error && <p className="form-error">{error}</p>}
                             <div className="form-actions">
                                 <button type="button" className="btn btn-secondary"
                                     onClick={() => setModalAbierto(false)}>Cancelar</button>

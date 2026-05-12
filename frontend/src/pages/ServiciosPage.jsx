@@ -13,20 +13,12 @@ export function ServiciosPage() {
     const [form, setForm] = useState(formInicial)
     const [error, setError] = useState('')
     const [cargando, setCargando] = useState(false)
-    const [cargandoLista, setCargandoLista] = useState(true)
 
     useEffect(() => { cargar() }, [])
 
     const cargar = async () => {
-        setCargandoLista(true)
-        try {
-            const res = await servicioService.listarTodos()
-            setServicios(res.data)
-        } catch {
-            setServicios([])
-        } finally {
-            setCargandoLista(false)
-        }
+        const res = await servicioService.listarTodos()
+        setServicios(res.data)
     }
 
     const abrirCrear = () => {
@@ -54,13 +46,9 @@ export function ServiciosPage() {
     }
 
     const toggleEstado = async (s) => {
-        try {
-            if (s.activo) await servicioService.desactivar(s.servicioId)
-            else await servicioService.activar(s.servicioId)
-            cargar()
-        } catch (err) {
-            alert(err.response?.data?.message || 'Error al cambiar estado')
-        }
+        if (s.activo) await servicioService.desactivar(s.servicioId)
+        else await servicioService.activar(s.servicioId)
+        cargar()
     }
 
     return (
@@ -68,48 +56,34 @@ export function ServiciosPage() {
             <div className="page">
                 <div className="page-header">
                     <h1 className="page-titulo">Servicios</h1>
-                    <button id="btn-nuevo-servicio" className="btn btn-primary" onClick={abrirCrear}>+ Nuevo servicio</button>
+                    <button className="btn btn-primary" onClick={abrirCrear}>+ Nuevo servicio</button>
                 </div>
-
-                {cargandoLista ? (
-                    <div className="loading-text">
-                        <span className="loading-spinner"></span>
-                        Cargando servicios...
-                    </div>
-                ) : (
-                    <div className="tabla-container">
-                        <table className="tabla">
-                            <thead><tr><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody>
-                                {servicios.length === 0 ? (
-                                    <tr><td colSpan={5} className="tabla-vacia">
-                                        <div className="empty-state">
-                                            <div className="empty-state-icon">🛁</div>
-                                            <div className="empty-state-text">No hay servicios registrados</div>
-                                        </div>
-                                    </td></tr>
-                                ) : servicios.map(s => (
-                                    <tr key={s.servicioId}>
-                                        <td style={{ fontWeight: 500 }}>{s.nombre}</td>
-                                        <td>{s.descripcion || '—'}</td>
-                                        <td style={{ fontWeight: 600, color: 'var(--color-primary-dark)' }}>${parseFloat(s.precio).toLocaleString()}</td>
-                                        <td><span className={`badge ${s.activo ? 'badge-activo' : 'badge-inactivo'}`}>
-                                            {s.activo ? '● Activo' : '● Inactivo'}
-                                        </span></td>
-                                        <td className="tabla-acciones">
-                                            <button className="btn btn-sm btn-secondary" onClick={() => abrirEditar(s)}>Editar</button>
-                                            <button className={`btn btn-sm ${s.activo ? 'btn-danger' : 'btn-success'}`}
-                                                onClick={() => toggleEstado(s)}>
-                                                {s.activo ? 'Desactivar' : 'Activar'}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-
+                <div className="tabla-container">
+                    <table className="tabla">
+                        <thead><tr><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            {servicios.length === 0 ? (
+                                <tr><td colSpan={5} className="tabla-vacia">No hay servicios registrados</td></tr>
+                            ) : servicios.map(s => (
+                                <tr key={s.servicioId}>
+                                    <td>{s.nombre}</td>
+                                    <td>{s.descripcion || '—'}</td>
+                                    <td>${parseFloat(s.precio).toLocaleString()}</td>
+                                    <td><span className={`badge ${s.activo ? 'badge-activo' : 'badge-inactivo'}`}>
+                                        {s.activo ? 'Activo' : 'Inactivo'}
+                                    </span></td>
+                                    <td className="tabla-acciones">
+                                        <button className="btn btn-sm btn-secondary" onClick={() => abrirEditar(s)}>Editar</button>
+                                        <button className={`btn btn-sm ${s.activo ? 'btn-danger' : 'btn-success'}`}
+                                            onClick={() => toggleEstado(s)}>
+                                            {s.activo ? 'Desactivar' : 'Activar'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 {modalAbierto && (
                     <Modal titulo={servicioEditando ? 'Editar servicio' : 'Nuevo servicio'} onClose={() => setModalAbierto(false)}>
                         <form onSubmit={handleSubmit} className="form">
@@ -127,7 +101,7 @@ export function ServiciosPage() {
                                 <input className="form-input" type="number" name="precio"
                                     value={form.precio} onChange={handleChange} min="0" step="0.01" required />
                             </div>
-                            {error && <p className="form-error">⚠ {error}</p>}
+                            {error && <p className="form-error">{error}</p>}
                             <div className="form-actions">
                                 <button type="button" className="btn btn-secondary" onClick={() => setModalAbierto(false)}>Cancelar</button>
                                 <button type="submit" className="btn btn-primary" disabled={cargando}>

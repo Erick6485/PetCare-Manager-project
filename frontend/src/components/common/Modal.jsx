@@ -4,7 +4,7 @@ export default function Modal({ titulo, onClose, children }) {
             <div className="modal" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className="modal-titulo">{titulo}</h2>
-                    <button className="modal-cerrar" onClick={onClose} aria-label="Cerrar">✕</button>
+                    <button className="modal-cerrar" onClick={onClose}>✕</button>
                 </div>
                 <div className="modal-body">
                     {children}
