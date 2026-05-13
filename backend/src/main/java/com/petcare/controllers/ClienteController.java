@@ -3,6 +3,7 @@ import com.petcare.dto.ClienteDTO;
 import com.petcare.services.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/clientes")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMINISTRADOR','RECEPCIONISTA')")
 public class ClienteController {
     private final ClienteService clienteService;
     @GetMapping

@@ -5,6 +5,7 @@ import com.petcare.models.Usuario;
 import com.petcare.repositories.RolRepository;
 import com.petcare.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
     public List<UsuarioDTO> listarTodos() {
         return usuarioRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -27,9 +29,10 @@ public class UsuarioService {
             throw new RuntimeException("El correo ya está registrado");
         Rol rol = rolRepository.findById(dto.getRolId())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        String hash = passwordEncoder.encode(dto.getContrasena());
         Usuario u = Usuario.builder().nombreCompleto(dto.getNombreCompleto())
                 .telefono(dto.getTelefono()).correo(dto.getCorreo())
-                .nombreUsuario(dto.getNombreUsuario()).contrasena(dto.getContrasena()).rol(rol).build();
+                .nombreUsuario(dto.getNombreUsuario()).contrasena(hash).rol(rol).build();
         return toDTO(usuarioRepository.save(u));
     }
     public void cambiarEstado(Integer id, boolean activo) {
