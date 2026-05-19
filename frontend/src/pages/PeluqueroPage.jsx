@@ -116,7 +116,8 @@ function TarjetaAtencion({ atencion: a, onCambiarEstado }) {
 
             // Llamada directa con fetch para multipart (axios necesita config especial)
             const token = localStorage.getItem('petcare_token')
-            const res = await fetch('http://localhost:8080/api/evidencias', {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+            const res = await fetch(`${baseUrl}/evidencias`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,
