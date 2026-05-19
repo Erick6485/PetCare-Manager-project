@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["jdk21"]
+
+[phases.build]
+cmds = ["./mvnw clean package -DskipTests"]
+
+[start]
+cmd = "java -jar target/backend-1.0.0.jar"
