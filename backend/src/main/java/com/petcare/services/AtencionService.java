@@ -42,9 +42,12 @@ public class AtencionService {
                 .fecha(dto.getFecha()).hora(dto.getHora()).observaciones(dto.getObservaciones()).build();
         return toDTO(atencionRepository.save(atencion));
     }
-    public AtencionDTO cambiarEstado(CambioEstadoRequest req, Integer usuarioId) {
+    public AtencionDTO cambiarEstado(CambioEstadoRequest req, Integer usuarioId, String rol) {
         Atencion a = atencionRepository.findById(req.getAtencionId())
                 .orElseThrow(() -> new RuntimeException("Atención no encontrada"));
+        if ("PELUQUERO".equals(rol) && !a.getPeluquero().getUsuarioId().equals(usuarioId)) {
+            throw new RuntimeException("No autorizado para modificar esta atención");
+        }
         EstadoAtencion anterior = a.getEstado();
         EstadoAtencion nuevo = EstadoAtencion.valueOf(req.getNuevoEstado());
         validarTransicion(anterior, nuevo);

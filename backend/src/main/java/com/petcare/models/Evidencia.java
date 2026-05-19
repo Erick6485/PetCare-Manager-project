@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -25,9 +27,10 @@ public class Evidencia {
     @Column(name = "evidenciaid")
     private Integer evidenciaId;
 
-    // ANTES o DESPUES — mapeado como String al tipo ENUM de PostgreSQL
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "tipo", nullable = false)
-    private String tipo;
+    private TipoEvidencia tipo;
 
     @Column(name = "ruta_archivo", nullable = false, length = 500)
     private String rutaArchivo;

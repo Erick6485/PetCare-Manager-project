@@ -37,7 +37,7 @@ SELECT
     'Administrador PetCare',
     'admin@petcare.com',
     'admin',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2a$10$nCYSRUxDioF///.Ox0bHrurN3QwSSODRiAwlYnil6OYJLi/BBfoh6',
     TRUE,
     RolID
 FROM Roles
